@@ -34,8 +34,9 @@ const LoginForm = ({setIsLoggedIn}) => {
           name="user-password"
           type="password"
           value={password}
-          onChange={onChangePassword}
+          autoComplete="on"
           required
+          onChange={onChangePassword}
         />
       </div>
       <ButtonWrapper>
