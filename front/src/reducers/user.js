@@ -8,68 +8,80 @@ const dummyUser = {
 
 export const initialState = {
   isLoggedIn: false,
+  isLoggingIn: false,
+  isLoggingOut: false,
   me: null,
-  signUpData: {},
-  loginData: {},
 };
 
-export const SIGN_UP = 'SIGN_UP';
-export const SIGN_UP_SUCCESS = 'SIGN_UP_SUCCESS';
-export const LOG_IN = 'LOG_IN'; // 액션의 이름
+export const LOG_IN_REQUEST = 'LOG_IN_REQUEST'; // 액션의 이름
 export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS'; // 액션의 이름
 export const LOG_IN_FAILURE = 'LOG_IN_FAILURE'; // 액션의 이름
-export const LOG_OUT = 'LOG_OUT';
+export const LOG_OUT_REQUEST = 'LOG_OUT_REQUEST';
+export const LOG_OUT_SUCCESS = 'LOG_OUT_SUCCESS';
+export const LOG_OUT_FAILURE = 'LOG_OUT_SUCCESS';
 
-export const signUpAction = (data) => {
+export const loginRequestAction = (data) => {
   return {
-    type: SIGN_UP,
-    data,
-  };
-};
-
-export const signUpSuccess = {
-  type: SIGN_UP_SUCCESS,
-};
-
-export const loginAction = (data) => {
-  return {
-    type: LOG_IN,
+    type: LOG_IN_REQUEST,
     data,
   }
 };
-export const logoutAction = {
-  type: LOG_OUT,
-};
-export const signUp = (data) => {
+export const logoutRequestAction = () => {
   return {
-    type: SIGN_UP,
-    data,
+    type: LOG_OUT_REQUEST,
   }
 };
 
-export default (state = initialState, action) => {
+const userReducer =  (state = initialState, action) => {
   switch (action.type) {
-    case LOG_IN: {
+    case LOG_IN_REQUEST: {
       return {
         ...state,
-        isLoggedIn: true,
-        me: dummyUser,
-        loginData: action.data,
+        isLoggingIn: true,
       };
     }
-    case LOG_OUT: {
+
+    case LOG_IN_SUCCESS: {
       return {
         ...state,
+        isLoggingIn: false,
+        isLoggedIn: true,
+        me: {...action.data, nickname: 'jtwjs'},
+      };
+    }
+
+    case LOG_IN_FAILURE: {
+      return {
+        ...state,
+        isLoggingIn: false,
+        isLoggedIn: true,
+      };
+    }
+
+    case LOG_OUT_REQUEST: {
+      return {
+        ...state,
+        isLoggingOut: true,
+      };
+    }
+
+    case LOG_OUT_SUCCESS: {
+      return {
+        ...state,
+        isLoggingOut: false,
         isLoggedIn: false,
         me: null,
       };
     }
-    case SIGN_UP: {
+
+    case LOG_OUT_FAILURE: {
       return {
         ...state,
-        signUpData: action.data,
+        isLoggingOut: false,
+        isLoggedIn: false,
       };
     }
+
     default: {
       return {
         ...state,
@@ -77,3 +89,5 @@ export default (state = initialState, action) => {
     }
   }
 };
+
+export default userReducer;
