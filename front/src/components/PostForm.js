@@ -17,10 +17,11 @@ const PostForm = () => {
 	const onClickImageUpload = useCallback(() => {
 		imageInput.current.click();
 	}, [imageInput.current]);
+
 	const onSubmit = useCallback(() => {
 		setText('');
-		dispatch(addPost);
-	}, []);
+		dispatch(addPost(text));
+	}, [text]);
 
 	return (
 		<Form style={{margin: '10px 0 20px'}} encType="multipart/form-data" onFinish={onSubmit}>
