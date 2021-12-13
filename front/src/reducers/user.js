@@ -1,24 +1,39 @@
-const dummyUser = {
-  id: 1,
-  nickname: '제로초',
-  Posts: [],
-  Followings: [],
-  Followers: [],
-};
-
 export const initialState = {
-  isLoggedIn: false,
-  isLoggingIn: false,
-  isLoggingOut: false,
+	loginLoading: false, // 로그인 시도중
+	loginDone: false,
+	loginError: null,
+	logoutLoading: false, // 로그아웃 시도중
+	logoutDone: false,
+	logoutError: null,
+	signUpLoading: false, // 회원가입 시도중
+	signUpDone: false,
+	signUpError: null,
   me: null,
+	signUpData: {},
+	loginData: {},
 };
 
+export const SIGN_UP_REQUEST = "SIGN_UP_REQUEST";
+export const SIGN_UP_SUCCESS = "SIGN_UP_SUCCESS";
+export const SIGN_UP_FAILURE = 'SIGN_UP_FAILURE';
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST'; // 액션의 이름
 export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS'; // 액션의 이름
 export const LOG_IN_FAILURE = 'LOG_IN_FAILURE'; // 액션의 이름
 export const LOG_OUT_REQUEST = 'LOG_OUT_REQUEST';
 export const LOG_OUT_SUCCESS = 'LOG_OUT_SUCCESS';
 export const LOG_OUT_FAILURE = 'LOG_OUT_SUCCESS';
+export const FOLLOW_UP_REQUEST = 'FOLLOW_UP_REQUEST';
+export const FOLLOW_UP_SUCCESS = 'FOLLOW_UP_SUCCESS';
+export const FOLLOW_UP_FAILURE = 'FOLLOW_UP_FAILURE';
+
+const dummyUser = (data) => ({
+	...data,
+	nickname: 'jtwjs',
+	id: 1,
+	Posts: [],
+	Followings: [],
+	Followers: [],
+})
 
 export const loginRequestAction = (data) => {
   return {
@@ -34,42 +49,74 @@ export const logoutRequestAction = () => {
 
 const userReducer =  (state = initialState, action) => {
   switch (action.type) {
+  	case SIGN_UP_REQUEST: {
+      return {
+        ...state,
+        logoutLoading: true,
+	      logoutDone: false,
+	      logoutError: null,
+      };
+    }
+
+    case SIGN_UP_SUCCESS: {
+      return {
+        ...state,
+        logoutLoading: false,
+        logoutDone: true,
+        me: null,
+      };
+    }
+
+    case SIGN_UP_FAILURE: {
+      return {
+        ...state,
+        logoutLoading: false,
+        logoutDone: false,
+	      logoutError: action.error,
+      };
+    }
+
     case LOG_IN_REQUEST: {
       return {
         ...state,
-        isLoggingIn: true,
+				loginLoading: true,
+	      loginError: null,
+	      loginDone: false,
       };
     }
 
     case LOG_IN_SUCCESS: {
       return {
         ...state,
-        isLoggingIn: false,
-        isLoggedIn: true,
-        me: {...action.data, nickname: 'jtwjs'},
+        loginLoading: false,
+        loginDone: true,
+        me: dummyUser(action.data),
       };
     }
 
     case LOG_IN_FAILURE: {
       return {
         ...state,
-        isLoggingIn: false,
-        isLoggedIn: true,
+        loginLoading: false,
+        loginError: action.error,
+	      logoutDone: false,
       };
     }
 
     case LOG_OUT_REQUEST: {
       return {
         ...state,
-        isLoggingOut: true,
+        logoutLoading: true,
+	      logoutDone: false,
+	      logoutError: null,
       };
     }
 
     case LOG_OUT_SUCCESS: {
       return {
         ...state,
-        isLoggingOut: false,
-        isLoggedIn: false,
+        logoutLoading: false,
+        logoutDone: true,
         me: null,
       };
     }
@@ -77,8 +124,9 @@ const userReducer =  (state = initialState, action) => {
     case LOG_OUT_FAILURE: {
       return {
         ...state,
-        isLoggingOut: false,
-        isLoggedIn: false,
+        logoutLoading: false,
+        logoutDone: false,
+	      logoutError: action.error,
       };
     }
 

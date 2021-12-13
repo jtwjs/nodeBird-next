@@ -7,5 +7,5 @@ export default function useInput(initialValue = null){
     setValue(value);
   }, []);
 
-  return [value, handler];
+  return [value, handler, setValue];
 }
