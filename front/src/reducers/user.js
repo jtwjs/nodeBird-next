@@ -25,14 +25,16 @@ export const LOG_OUT_FAILURE = 'LOG_OUT_SUCCESS';
 export const FOLLOW_UP_REQUEST = 'FOLLOW_UP_REQUEST';
 export const FOLLOW_UP_SUCCESS = 'FOLLOW_UP_SUCCESS';
 export const FOLLOW_UP_FAILURE = 'FOLLOW_UP_FAILURE';
+export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
+export const REMOVE_POST_OF_ME = 'REMOVE_POST_OF_ME';
 
 const dummyUser = (data) => ({
 	...data,
 	nickname: 'jtwjs',
 	id: 1,
-	Posts: [],
-	Followings: [],
-	Followers: [],
+	Posts: [{id: 1}],
+	Followings: [{nickname: '부기초'},{nickname: 'Chanho Lee'},{nickname: 'neue zeal'}],
+	Followers: [{nickname: '부기초'},{nickname: 'Chanho Lee'},{nickname: 'neue zeal'}],
 })
 
 export const loginRequestAction = (data) => {
@@ -129,6 +131,24 @@ const userReducer =  (state = initialState, action) => {
 	      logoutError: action.error,
       };
     }
+
+	  case ADD_POST_TO_ME:
+	  	return {
+	  		...state,
+			  me: {
+	  			...state.me,
+	  			Posts: [{id: action.data}, ...state.me.Posts],
+			  }
+		  }
+
+	  case REMOVE_POST_OF_ME:
+	  	return {
+	  		...state,
+			  me: {
+	  			...state.me,
+				  Posts: state.me.Posts.filter((v) => v.id !== action.data),
+			  },
+		  }
 
     default: {
       return {
