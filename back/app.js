@@ -1,12 +1,26 @@
-const http = require('http');
-const server = http.createServer((req, res) => {
-  console.log(req.url, req.method);
-  res.write('Hello node1');
-  res.write('Hello node2');
-  res.write('Hello node3');
-  res.write('Hello node4');
-  res.end('Hello node');
+const express = require('express');
+const app = express();
+
+const postRouter = require('./routes/post');
+
+app.get('/', (req, res) => {
+  res.send('hello express');
 });
-server.listen(3065, () => {
-	console.log('Server running on port 3065')
+
+app.get('/api', (req, res) => {
+	res.send('hello api');
+})
+
+app.get('/api/posts', (req, res) => {
+	res.json([
+		{id: 1, content: 'hello'},
+		{id: 2, content: 'hello2'},
+		{id: 3, content: 'hello3'},
+	]);
 });
+
+app.use('/post', postRouter);
+
+app.listen(3065, () => {
+	console.log('Server running on port 3065');
+})
