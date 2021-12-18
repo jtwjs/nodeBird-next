@@ -1,6 +1,12 @@
 import produce from '../util/produce';
 
 export const initialState = {
+	followLoading: false, // 팔로우 시도중
+  followDone: false,
+  followError: null,
+	unfollowLoading: false, // 언팔로우 시도중
+  unfollowDone: false,
+  unfollowError: null,
   loginLoading: false, // 로그인 시도중
   loginDone: false,
   loginError: null,
@@ -24,9 +30,17 @@ export const LOG_IN_FAILURE = 'LOG_IN_FAILURE'; // 액션의 이름
 export const LOG_OUT_REQUEST = 'LOG_OUT_REQUEST';
 export const LOG_OUT_SUCCESS = 'LOG_OUT_SUCCESS';
 export const LOG_OUT_FAILURE = 'LOG_OUT_SUCCESS';
-export const FOLLOW_UP_REQUEST = 'FOLLOW_UP_REQUEST';
-export const FOLLOW_UP_SUCCESS = 'FOLLOW_UP_SUCCESS';
-export const FOLLOW_UP_FAILURE = 'FOLLOW_UP_FAILURE';
+// export const FOLLOW_UP_REQUEST = 'FOLLOW_UP_REQUEST';
+// export const FOLLOW_UP_SUCCESS = 'FOLLOW_UP_SUCCESS';
+// export const FOLLOW_UP_FAILURE = 'FOLLOW_UP_FAILURE';
+export const FOLLOW_REQUEST = 'FOLLOW_REQUEST';
+export const FOLLOW_SUCCESS = 'FOLLOW_SUCCESS';
+export const FOLLOW_FAILURE = 'FOLLOW_FAILURE';
+
+export const UNFOLLOW_REQUEST = 'UNFOLLOW_REQUEST';
+export const UNFOLLOW_SUCCESS = 'UNFOLLOW_SUCCESS';
+export const UNFOLLOW_FAILURE = 'UNFOLLOW_FAILURE';
+
 export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
 export const REMOVE_POST_OF_ME = 'REMOVE_POST_OF_ME';
 
@@ -53,6 +67,42 @@ export const logoutRequestAction = () => {
 
 const userReducer = (state = initialState, action) => produce(state, (draft) => {
   switch (action.type) {
+  	case FOLLOW_REQUEST:
+      draft.followLoading = true;
+      draft.followDone = false;
+      draft.followError = null;
+      break;
+
+      case FOLLOW_SUCCESS:
+      draft.followLoading = false;
+      draft.me.Followings.push({id: action.data});
+      draft.followError = null;
+      break;
+
+      case FOLLOW_FAILURE:
+      draft.followLoading = false;
+      draft.followDone = false;
+      draft.followError = action.error;
+      break;
+
+      case UNFOLLOW_REQUEST:
+      draft.unfollowLoading = true;
+      draft.unfollowDone = false;
+      draft.unfollowError = null;
+      break;
+
+      case UNFOLLOW_SUCCESS:
+      draft.unfollowLoading = false;
+      draft.me.Followings = draft.me.Followings.filter(v => v.id !== action.data);
+      draft.unfollowError = null;
+      break;
+
+      case UNFOLLOW_FAILURE:
+      draft.unfollowLoading = false;
+      draft.unfollowDone = false;
+      draft.unfollowError = action.error;
+      break;
+
     case SIGN_UP_REQUEST:
       draft.logoutLoading = true;
       draft.logoutDone = false;
