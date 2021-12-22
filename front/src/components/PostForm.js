@@ -4,6 +4,8 @@ import {useSelector, useDispatch} from 'react-redux';
 
 import {addPost} from "../reducers/post";
 
+/* 이곳에서 작성하여도 공유가 되는것인가요?? */
+
 const PostForm = () => {
 	const dispatch = useDispatch();
 	const {imagePaths} = useSelector((state) => state.post);
