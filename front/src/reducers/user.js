@@ -104,21 +104,21 @@ const userReducer = (state = initialState, action) => produce(state, (draft) => 
       break;
 
     case SIGN_UP_REQUEST:
-      draft.logoutLoading = true;
-      draft.logoutDone = false;
-      draft.logOutError = null;
+      draft.signUpLoading = true;
+      draft.signUpDone = false;
+      draft.signUpError = null;
       break;
 
     case SIGN_UP_SUCCESS:
-      draft.logoutLoading = false;
-      draft.logoutDone = true;
-      draft.me = null;
+      draft.signUpLoading = false;
+      draft.signUpDone = true;
+      draft.signUpError = null;
       break;
 
     case SIGN_UP_FAILURE:
-      draft.logoutLoading = false;
-      draft.logoutDone = false;
-      draft.logoutError = action.error;
+      draft.signUpLoading = false;
+      draft.signUpDone = false;
+      draft.signUpError = action.error;
       break;
 
     case LOG_IN_REQUEST:
