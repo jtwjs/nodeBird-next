@@ -1,8 +1,35 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
+const passport = require('passport');
+
 const {User} = require('../models');
 
 const router = express.Router();
+
+router.post('/login', (req, res, next) => {
+	// 미들웨어 확장방법 app.use(미들웨어) -> app.use((req, res, next) => { 미들웨어(req, res, next) })
+	passport.authenticate('local', (err, user, info) => {
+	// passport done 콜백이 전달된 것
+	if (err) {
+		console.error(err);
+		return next(err);
+	}
+	if (info) {
+		// 401 허가되지 않은것 (로그인이 잘못될때)
+		// 403 금지 (허용되지 않은 요청)
+		return res.status(401).send(info.reason);
+	}
+	// 실제 로그인 작업 (패스포트로 로그인 한번 더 -> passport.serializeUser가 실행됨)
+	return req.login(user, async (loginErr) => {
+		if (loginErr) {
+			console.error(loginErr);
+			return next(loginErr);
+		}
+		// res.setHeader('Cookie', 'dfsfsdf');
+		return res.status(200).json(user);
+	})
+})(req, res, next);
+});
 
 router.post('/', async (req, res, next) => {
 	try {
@@ -31,5 +58,12 @@ router.post('/', async (req, res, next) => {
 		next(err); // next를 통해서 에러처리 미들웨어로 에러를 보냄  res.statis(500)
 	}
 });
+
+router.post('/user/logout', (req, res) => {
+	// 로그아웃
+	req.logout();
+	req.session.destroy();
+	res.send('ok');
+})
 
 module.exports = router;
