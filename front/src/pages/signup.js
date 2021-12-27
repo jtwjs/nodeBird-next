@@ -11,7 +11,7 @@ import {SIGN_UP_REQUEST} from "../reducers/user";
 
 const Signup = () => {
 	const dispatch = useDispatch();
-	const {signUpLoading, signUpDone, signUpError} = useSelector((state) => state.user);
+	const {signUpLoading, signUpDone, signUpError, me} = useSelector((state) => state.user);
 	const [id, onChangeId] = useInput('');
 	const [nickname, onChangeNickname] = useInput('');
 	const [password, onChangePassword] = useInput('');
@@ -39,8 +39,6 @@ const Signup = () => {
 		if (!term) {
 			return setTermError(true);
 		}
-
-		console.log(id, nickname, password);
 		dispatch({
 			type: SIGN_UP_REQUEST,
 			data: {email: id, password, nickname},
@@ -48,8 +46,14 @@ const Signup = () => {
 	}, [password, passwordCheck, term]);
 
 	useEffect(() => {
+		if (me && me.id) {
+			Router.replace('/');
+		}
+	}, [me && me.id])
+
+	useEffect(() => {
 		if (signUpDone) {
-			Router.push('/');
+			Router.replace('/');
 		}
 	}, [signUpDone]);
 
@@ -117,7 +121,7 @@ const Signup = () => {
 							termError && <ErrorMessage>약관에 동의하셔야 합니다.</ErrorMessage>
 						}
 						<JoinButtonWrapper>
-							<Button type='primary' htmlType="submit">가입하기</Button>
+							<Button type='primary' htmlType="submit" loading={{signUpLoading}}>가입하기</Button>
 						</JoinButtonWrapper>
 					</div>
 				</div>
@@ -133,5 +137,5 @@ const ErrorMessage = styled.div`
 `;
 
 const JoinButtonWrapper = styled.div`
-  margin-top: 10px;
+	margin-top: 10px;
 `
