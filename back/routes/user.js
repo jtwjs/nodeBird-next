@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 
-const {User} = require('../models');
+const {User, Post} = require('../models');
 
 const router = express.Router();
 
@@ -25,8 +25,24 @@ router.post('/login', (req, res, next) => {
 			console.error(loginErr);
 			return next(loginErr);
 		}
+			const fileUserWithoutPassword = await User.findOne({
+			where: { id: user.id },
+			attributes: {
+				exclude: ['password'],
+			},
+			include: [{
+				model: Post,
+			}, {
+				model: User,
+				as: 'Followings',
+			}, {
+				model: User,
+				as: 'Followers',
+			}]
+		})
+
 		// res.setHeader('Cookie', 'dfsfsdf');
-		return res.status(200).json(user);
+		return res.status(200).json(fileUserWithoutPassword);
 	})
 })(req, res, next);
 });
@@ -51,6 +67,7 @@ router.post('/', async (req, res, next) => {
 			nickname: req.body.nickname,
 			password: hashedPassword,
 		});
+
 		// res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3060')
 		res.status(200).send('ok'); // res.status(200).send('ok'); 생략가능하지만 붙이자
 	} catch (err) {

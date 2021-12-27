@@ -5,7 +5,7 @@ const {User} = require('../models');
 
 module.exports = () => {
   passport.serializeUser((user, done) => {
-    done(null, User.id);
+    done(null, user.id);
   });
 
   // 로그인 성공하고나서 그 다음 요청부터
