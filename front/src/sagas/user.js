@@ -20,7 +20,7 @@ import {
 } from '../reducers/user';
 
 function signupAPI(data) {
-  return axios.post('http://localhost:3065/user', data);
+  return axios.post('/user', data);
 }
 
 function* signup(action) {
@@ -39,17 +39,15 @@ function* signup(action) {
 }
 
 function logInAPI(data) {
-  return axios.post('/api/login', data);
+  return axios.post('/user/login', data);
 }
 
 function* logIn(action) {
   try {
-    console.log('saga logIn');
-    // const result = yield call(logInAPI);
-    yield delay(1000);
+    const result = yield call(logInAPI, action.data);
     yield put({
       type: LOG_IN_SUCCESS,
-      data: action.data,
+      data: result.data,
     });
   } catch (err) {
     console.error(err);
@@ -61,13 +59,12 @@ function* logIn(action) {
 }
 
 function logOutAPI() {
-  return axios.post('/api/logout');
+  return axios.post('/user/logout');
 }
 
 function* logOut() {
   try {
-    // const result = yield call(logOutAPI);
-    yield delay(1000);
+    yield call(logOutAPI);
     yield put({
       type: LOG_OUT_SUCCESS,
     });
@@ -81,7 +78,7 @@ function* logOut() {
 }
 
 function followAPI(data) {
-  return axios.post('/api/follow', data);
+  return axios.post('/user/follow', data);
 }
 
 function* follow(action) {
@@ -101,7 +98,7 @@ function* follow(action) {
 }
 
 function unfollowAPI(data) {
-  return axios.post('/api/unfollow', data);
+  return axios.post('/user/unfollow', data);
 }
 
 function* unfollow(action) {

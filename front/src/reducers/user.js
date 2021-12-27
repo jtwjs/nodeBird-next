@@ -130,7 +130,7 @@ const userReducer = (state = initialState, action) => produce(state, (draft) => 
     case LOG_IN_SUCCESS:
       draft.loginLoading = false;
       draft.loginDone = true;
-      draft.me = dummyUser(action.data);
+      draft.me = action.data;
       break;
 
     case LOG_IN_FAILURE:
@@ -148,6 +148,7 @@ const userReducer = (state = initialState, action) => produce(state, (draft) => 
     case LOG_OUT_SUCCESS:
       draft.logoutLoading = false;
       draft.logoutDone = true;
+      draft.loginDone = false;
       draft.me = null;
       break;
 
