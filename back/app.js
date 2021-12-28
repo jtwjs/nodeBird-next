@@ -57,6 +57,15 @@ app.get('/api/posts', (req, res) => {
 app.use('/post', postRouter);
 app.use('/user', userRouter);
 
+/*
+express 내부적으로 app.use와 app.listen 사이에 error middleware가 존재
+에러처리 미들웨어를 커스텀 할때
+1. 에러 페이지를 따로 띄우고 싶다던가
+2. 에러 처리에 특정한 정보를 뺴고 싶을 때
+app.use((err, req, res, next) => {
+});
+ */
+
 app.listen(3065, () => {
   console.log('Server running on port 3065');
 })
