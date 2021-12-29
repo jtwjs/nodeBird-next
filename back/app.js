@@ -21,8 +21,12 @@ passportConfig();
 // CORS 라이브러리
 // res.setHeader('Access-Control-Allow-Origin', '*')
 app.use(cors({
+	// access control allow origin
 	origin: true, // 보낸곳의 주소가 자동으로 들어감
-	credentials: false, // default false
+	// access control allow credentials
+	// 다른 도메인간 (브라우저 3000, 서버 3005, 쿠키 공유)
+	// 추가로 클라이언트에서는 axios에 withCredentials: true 설정해주어야함
+	credentials: true, // default false
 }));
 // 프론트에서 넘어온 데이터(Http body message)를 req.body에 넣어주는 작업 코드
 // 미들웨어라는게 위에서 아래 코드로 순서대로 실행되기 때문에 위에 미리 작성해주어야한다.
