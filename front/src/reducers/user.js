@@ -1,6 +1,9 @@
 import produce from '../util/produce';
 
 export const initialState = {
+	loadMyInfoLoading: false, // 유저정보 가져오기 시도중
+  loadMyInfoDone: false,
+  loadMyInfoError: null,
 	followLoading: false, // 팔로우 시도중
   followDone: false,
   followError: null,
@@ -21,6 +24,9 @@ export const initialState = {
   loginData: {},
 };
 
+export const LOAD_MY_INFO_REQUEST = "LOAD_MY_INFO_REQUEST";
+export const LOAD_MY_INFO_SUCCESS = "LOAD_MY_INFO_SUCCESS";
+export const LOAD_MY_INFO_FAILURE = "LOAD_MY_INFO_FAILURE";
 export const SIGN_UP_REQUEST = "SIGN_UP_REQUEST";
 export const SIGN_UP_SUCCESS = "SIGN_UP_SUCCESS";
 export const SIGN_UP_FAILURE = 'SIGN_UP_FAILURE';
@@ -83,6 +89,24 @@ const userReducer = (state = initialState, action) => produce(state, (draft) => 
       draft.followLoading = false;
       draft.followDone = false;
       draft.followError = action.error;
+      break;
+
+      case LOAD_MY_INFO_REQUEST:
+      draft.loadMyInfoLoading = true;
+      draft.loadMyInfowDone = false;
+      draft.loadMyInfoError = null;
+      break;
+
+      case LOAD_MY_INFO_SUCCESS:
+      draft.loadMyInfoLoading = false;
+      draft.me = action.data;
+      draft.loadMyInfoError = null;
+      break;
+
+      case LOAD_MY_INFO_FAILURE:
+      draft.loadMyInfoLoading = false;
+      draft.loadMyInfoDone = false;
+      draft.loadMyInfoError = action.error;
       break;
 
       case UNFOLLOW_REQUEST:
