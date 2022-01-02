@@ -4,6 +4,12 @@ export const initialState = {
 	mainPosts: [],
 	imagePaths: [],
 	hasMorePosts: true,
+	likePostsLoading: false,
+	likePostsDone: false,
+	likePostsError: null,
+	unlikePostsLoading: false,
+	unlikePostsDone: false,
+	unlikePostsError: null,
 	loadPostsLoading: false,
 	loadPostsDone: false,
 	loadPostsError: null,
@@ -17,6 +23,14 @@ export const initialState = {
 	addCommentDone: false,
 	addCommentError: null,
 };
+
+export const LIKE_POST_REQUEST = 'LIKE_POST_REQUEST';
+export const LIKE_POST_SUCCESS = 'LIKE_POST_SUCCESS';
+export const LIKE_POST_FAILURE = 'LIKE_POST_FAILURE';
+
+export const UNLIKE_POST_REQUEST = 'UNLIKE_POST_REQUEST';
+export const UNLIKE_POST_SUCCESS = 'UNLIKE_POST_SUCCESS';
+export const UNLIKE_POST_FAILURE = 'UNLIKE_POST_FAILURE';
 
 export const LOAD_POSTS_REQUEST = 'LOAD_POSTS_REQUEST';
 export const LOAD_POSTS_SUCCESS = 'LOAD_POSTS_SUCCESS';
@@ -47,6 +61,40 @@ export const addComment = (data) => ({
 // 이전 상태를 액션을 통해 다음 상태로 만들어내는 함수(불변성은 지키면서)
 const reducer = (state = initialState, action) => produce(state, (draft) => {
 	switch (action.type) {
+		case LIKE_POST_REQUEST:
+			draft.likePostsLoading = true;
+			draft.likePostsDone = false;
+			draft.likePostsError = null;
+			break;
+		case LIKE_POST_SUCCESS: {
+			const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
+			post.Likers.push({id: action.data.UserId});
+			draft.likePostsLoading = false;
+			draft.likePostsDone = true;
+			draft.hasMorePosts = draft.mainPosts.length < 50;
+			break;
+		}
+		case LIKE_POST_FAILURE:
+			draft.likePostsLoading = false;
+			draft.likePostsError = action.error;
+			break;
+		case UNLIKE_POST_REQUEST:
+			draft.unlikePostsLoading = true;
+			draft.unlikePostsDone = false;
+			draft.unlikePostsError = null;
+			break;
+		case UNLIKE_POST_SUCCESS: {
+			const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
+			post.Likers = post.Likers.filter((v) => v.id !== action.data.UserId);
+			draft.unlikePostsLoading = false;
+			draft.unlikePostsDone = true;
+			draft.hasMorePosts = draft.mainPosts.length < 50;
+			break;
+		}
+		case UNLIKE_POST_FAILURE:
+			draft.unlikePostsLoading = false;
+			draft.unlikePostsError = action.error;
+			break;
 		case LOAD_POSTS_REQUEST:
 			draft.loadPostsLoading = true;
 			draft.loadPostsDone = false;
