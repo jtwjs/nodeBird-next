@@ -1,28 +1,27 @@
 const express = require('express');
 
 const {Post, Image, User, Comment} = require('../models');
-const { isLoggedIn } = require('./middlewares');
+const {isLoggedIn} = require('./middlewares');
 
 const router = express.Router();
 router.post('/', isLoggedIn, async (req, res, next) => {
 	try {
-	const post = await Post.create({
-		content: req.body.content,
-		UserId: req.user.id,
-	});
-	const fullPost = await Post.findOne({
-		where: {id: post.id},
-		include: [{
-			model: Image,
-		}, {
-			model: Comment,
-		}, {
-			model: User,
-		}]
-	})
-	res.status(201).json(fullPost);
-	}
-	catch (err) {
+		const post = await Post.create({
+			content: req.body.content,
+			UserId: req.user.id,
+		});
+		const fullPost = await Post.findOne({
+			where: {id: post.id,},
+			include: [{
+				model: Image,
+			}, {
+				model: Comment,
+			}, {
+				model: User,
+			}]
+		})
+		res.status(201).json(fullPost);
+	} catch (err) {
 		console.error(err);
 		next(err);
 	}
@@ -31,7 +30,7 @@ router.post('/', isLoggedIn, async (req, res, next) => {
 router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {
 	try {
 		const post = await Post.findOne({
-			where: { id: req.params.postId},
+			where: {id: req.params.postId},
 		})
 		if (!post) {
 			return res.status(403).send('존재하지 않는 게시글입니다.');
@@ -42,17 +41,23 @@ router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {
 			PostId: req.body.postId,
 			UserId: req.user.id,
 		})
+		const fullComment = await Comment.findOne({
+			where: {id: comment.id},
+			include: [{
+				model: User,
+				attributes: ['id', 'nickname'],
+			}]
+		})
 
-	res.status(201).json(comment);
-	}
-	catch (err) {
+		res.status(201).json(fullComment);
+	} catch (err) {
 		console.error(err);
 		next(err);
 	}
 });
 
 router.delete('/', (req, res) => {
-	res.json({id :1});
+	res.json({id: 1});
 })
 
 module.exports = router;
