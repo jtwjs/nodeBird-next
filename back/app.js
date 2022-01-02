@@ -5,8 +5,10 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const dotenv = require('dotenv');
+const morgan = require('morgan');
 
 const postRouter = require('./routes/post');
+const postsRouter = require('./routes/posts');
 const userRouter = require('./routes/user');
 const db = require('./models');
 const passportConfig = require('./passport');
@@ -17,7 +19,8 @@ db.sequelize.sync()
   .catch(console.error);
 
 passportConfig();
-
+// morgan을 넣어주면 프론트에서 백엔드로 요청을 보낼 때 어떤 요청을 보냈는지 기록됨(디버깅)
+app.use(morgan('dev'));
 // CORS 라이브러리
 // res.setHeader('Access-Control-Allow-Origin', '*')
 app.use(cors({
@@ -46,19 +49,8 @@ app.get('/', (req, res) => {
   res.send('hello express');
 });
 
-app.get('/api', (req, res) => {
-  res.send('hello api');
-})
-
-app.get('/api/posts', (req, res) => {
-  res.json([
-    {id: 1, content: 'hello'},
-    {id: 2, content: 'hello2'},
-    {id: 3, content: 'hello3'},
-  ]);
-});
-
 app.use('/post', postRouter);
+app.use('/posts', postsRouter);
 app.use('/user', userRouter);
 
 /*
