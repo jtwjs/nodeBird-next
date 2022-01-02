@@ -32,10 +32,10 @@ router.get('/', async (req, res, next) => {
 					attributes: ['id'],
 				}]
 			})
-
 			res.status(200).json(fullUserWithoutPassword);
+		} else {
+			res.status(200).json(null);
 		}
-      res.status(200).json(null);
 	} catch (err) {
 		console.error(err);
 		next(err);
