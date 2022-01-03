@@ -96,8 +96,19 @@ router.delete('/:postId/like', isLoggedIn, async (req, res, next) => {
 	}
 })
 
-router.delete('/', (req, res) => {
-	res.json({id: 1});
-})
+router.delete('/:postId', isLoggedIn, async (req, res, next) => {
+	try {
+		await Post.destroy({ // sequelize에서 삭제 할때 사용
+			where: {
+				id: req.params.postId,
+				UserId: req.user.id, // 본인 게시물만
+			},
+		});
+		res.status(200).json({PostId: parseInt(req.params.postId, 10)});
+	} catch (err) {
+		console.error(err);
+		next(err);
+	}
+});
 
 module.exports = router;
