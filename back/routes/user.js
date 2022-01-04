@@ -113,7 +113,7 @@ router.post('/', isNotLoggedIn, async (req, res, next) => {
 	}
 });
 
-router.post('/user/logout', isLoggedIn, (req, res) => {
+router.post('/logout', isLoggedIn, (req, res) => {
 	// 로그아웃
 	req.logout();
 	req.session.destroy();
@@ -125,9 +125,80 @@ router.patch('/nickname', isLoggedIn, async (req, res, next) => {
 		await User.update({
 			nickname: req.body.nickname,
 		}, {
-			where: { id: req.user.id },
+			where: {id: req.user.id},
 		});
-		res.status(200).json({ nickname: req.body.nickname })
+		res.status(200).json({nickname: req.body.nickname})
+	} catch (err) {
+		console.error(err);
+		next(err);
+	}
+})
+
+router.patch('/:userId/follow', isLoggedIn, async (req, res, next) => {
+	try {
+		const user = await User.findOne({where: {id: req.params.userId}});
+		if (!user) {
+			res.status(403).send('유령을 팔로우 하신다구요?')
+		}
+		await user.addFollowers(req.user.id);
+		res.status(200).json({UserId: parseInt(req.params.userId,10)});
+
+	} catch (err) {
+		console.error(err);
+		next(err);
+	}
+})
+
+router.delete('/:userId/follow', isLoggedIn, async (req, res, next) => {
+	try {
+		const user = await User.findOne({where: {id: req.params.userId}});
+		if (!user) {
+			res.status(403).send('유령을 언팔로우 하신다구요?')
+		}
+		await user.removeFollowers(req.user.id);
+		res.status(200).json({UserId: parseInt(req.params.userId, 10)});
+	} catch (err) {
+		console.error(err);
+		next(err);
+	}
+})
+
+router.get('/followers', isLoggedIn, async (req, res, next) => {
+	try {
+		const user = await User.findOne({where: {id: req.user.id}});
+		if (!user) {
+			res.status(403).send('유령을 찾으시나요 ㅋ')
+		}
+		const followers = await user.getFollowers();
+		res.status(200).json(followers);
+	} catch (err) {
+		console.error(err);
+		next(err);
+	}
+})
+
+router.get('/followings', isLoggedIn, async (req, res, next) => {
+	try {
+		const user = await User.findOne({where: {id: req.user.id}});
+		if (!user) {
+			res.status(403).send('유령을 찾으시나요 ㅋ')
+		}
+		const followings = await user.getFollowings();
+		res.status(200).json(followings);
+	} catch (err) {
+		console.error(err);
+		next(err);
+	}
+})
+
+router.delete('/follower/:userId', isLoggedIn, async (req, res, next) => {
+	try {
+		const user = await User.findOne({where: {id: req.params.userId}});
+		if (!user) {
+			res.status(403).send('유령을 차단하려고 하시네ㅋ')
+		}
+		await user.removeFollowers(req.user.id);
+		res.status(200).json(parseInt(req.params.userId, 10));
 	} catch (err) {
 		console.error(err);
 		next(err);
