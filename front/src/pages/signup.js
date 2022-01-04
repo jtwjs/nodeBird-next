@@ -121,7 +121,7 @@ const Signup = () => {
 							termError && <ErrorMessage>약관에 동의하셔야 합니다.</ErrorMessage>
 						}
 						<JoinButtonWrapper>
-							<Button type='primary' htmlType="submit" loading={{signUpLoading}}>가입하기</Button>
+							<Button type='primary' htmlType="submit" loading={signUpLoading}>가입하기</Button>
 						</JoinButtonWrapper>
 					</div>
 				</div>
