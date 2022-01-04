@@ -41,7 +41,6 @@ const PostCard = ({post}) => {
 			data: post.id,
 		});
 	}, []);
-
 	const liked = post.Likers.find((v) => v.id === id);
 
 	return (
