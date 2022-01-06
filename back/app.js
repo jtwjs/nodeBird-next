@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const session = require('express-session');
+const path = require('path');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const dotenv = require('dotenv');
@@ -31,6 +32,13 @@ app.use(cors({
 	// 추가로 클라이언트에서는 axios에 withCredentials: true 설정해주어야함
 	credentials: true, // default false
 }));
+// node에서는 __dirname + 'uploads' 방식보다는 path.join을 활용
+// 운영체제마다 경로(경로구분자)가 다르기 떄문 e.g window => \uploads, mac => /uploads
+// 운영체제에 맞게 알아서 써주는 path.join 활용
+// '/' => localhost:3065
+// express.static은 직접적인 정적파일 제공해주는 미들웨어
+app.use('/', express.static(path.join(__dirname, 'uploads')));
+
 // 프론트에서 넘어온 데이터(Http body message)를 req.body에 넣어주는 작업 코드
 // 미들웨어라는게 위에서 아래 코드로 순서대로 실행되기 때문에 위에 미리 작성해주어야한다.
 app.use(express.json()); // 프론트엔드에서 받은 데이터가 (형식 json)인 경우

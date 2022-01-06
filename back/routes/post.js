@@ -16,13 +16,39 @@ try {
   fs.mkdirSync('uploads');
 }
 
+// 이미지 업로드를 위한 library
+const upload = multer({
+  storage: multer.diskStorage({
+    // 저장위치
+    destination(req, file, done) {
+      done(null, 'uploads');
+    },
+    filename(req, file, done) { // 제로초.png
+      const ext = path.extname(file.originalname); // 확장자 추출(png)
+      const basename = path.basename(file.originalname, ext);
+      done(null, basename + '_' + new Date().getTime() + ext); // 제로초1231252.png
+    },
+  }),
+  limits: {fileSize: 20 * 1024 * 1024}, // 20MB
+});
 
-router.post('/', isLoggedIn, async (req, res, next) => {
+router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
   try {
     const post = await Post.create({
       content: req.body.content,
       UserId: req.user.id,
     });
+    if (req.body.image) {
+      if (Array.isArray(req.body.image)) {
+        // 이미지를 여러개 올리면 image: [이미지.png, 부기초.png]
+        const images = await Promise.all(req.body.image.map((image) => Image.create({src: image})));
+        await post.addImages(images);
+      } else {
+        // 이미지를 하나만 올리면 image: 이미지.png
+        const image = await Image.create({src: req.body.image});
+         await post.addImages(image);
+      }
+    }
     const fullPost = await Post.findOne({
       where: {id: post.id},
       include: [{
@@ -123,21 +149,7 @@ router.delete('/:postId', isLoggedIn, async (req, res, next) => {
     next(err);
   }
 });
-// 이미지 업로드를 위한 library
-const upload = multer({
-  storage: multer.diskStorage({
-    // 저장위치
-    destination(req, file, done) {
-      done(null, 'uploads');
-    },
-    filename(req, file, done) { // 제로초.png
-      const ext = path.extname(file.originalname); // 확장자 추출(png)
-      const basename = path.basename(file.originalname, ext);
-      done(null, basename + new Date().getTime() + ext); // 제로초1231252.png
-    },
-  }),
-  limits: {fileSize: 20 * 1024 * 1024}, // 20MB
-});
+
 // 여러장이면 array, 한장이면 single, json, text이면  none
 // 이미지 업로드 되고 난 후
 router.post('/images', isLoggedIn, upload.array('image'), (req, res, next) => {
