@@ -1,5 +1,5 @@
 const DataTypes = require('sequelize');
-const { Model } = DataTypes;
+const {Model} = DataTypes;
 
 module.exports = class Image extends Model {
   static init(sequelize) {
@@ -10,14 +10,15 @@ module.exports = class Image extends Model {
         allowNull: false,
       },
     }, {
-      modelName: 'Image',
-      tableName: 'images',
-      charset: 'utf8',
-      collate: 'utf8_general_ci',
+      modelName: 'Hashtag',
+      tableName: 'hashtags',
+      charset: 'utf8mb4',
+      collate: 'utf8mb4_general_ci', // 이모티콘 저장
       sequelize,
     });
   }
+
   static associate(db) {
-    db.Image.belongsTo(db.Post);
+    db.Hashtag.belongsToMany(db.Post, {through: 'PostHashtag'});
   }
 };

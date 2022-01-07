@@ -3,7 +3,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs'); // 파일시스템 조작할수 있는 모듈
 
-const {Post, Image, User, Comment} = require('../models');
+const {Post, Image, User, Comment, Hashtag} = require('../models');
 const {isLoggedIn} = require('./middlewares');
 
 const router = express.Router();
@@ -34,10 +34,19 @@ const upload = multer({
 
 router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
   try {
+  	const hashtags = req.body.content.match(/#[^\s#]+/g);
     const post = await Post.create({
       content: req.body.content,
       UserId: req.user.id,
     });
+    if (hashtags) {
+    	// findOrCreate db에 없다면 추가 있으면 추가하지 않음, where절 필수
+    	const result = await Promise.all(hashtags.map((tag) => Hashtag.findOrCreate({
+		    where: {name: tag.slice(1).toLowerCase() }
+    	}))); // [[값, 중복유무불린값], [해쉬태그, true]]
+    	await post.addHashtags(result.map((v) => v[0]));
+    }
+
     if (req.body.image) {
       if (Array.isArray(req.body.image)) {
         // 이미지를 여러개 올리면 image: [이미지.png, 부기초.png]
