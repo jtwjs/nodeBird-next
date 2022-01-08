@@ -1,4 +1,4 @@
-import {all, delay, fork, call, put, takeLatest} from 'redux-saga/effects';
+import {all, fork, call, put, takeLatest} from 'redux-saga/effects';
 import axios from 'axios';
 
 import {
@@ -47,7 +47,7 @@ function* removeFollower(action) {
 		console.error(err);
 		yield put({
 			type: REMOVE_FOLLOWER_FAILURE,
-			data: err.response.data,
+			error: err.response.data,
 		})
 	}
 }
@@ -67,7 +67,7 @@ function* loadFollowers() {
 		console.error(err);
 		yield put({
 			type: LOAD_FOLLOWERS_FAILURE,
-			data: err.response.data,
+			error: err.response.data,
 		})
 	}
 }
@@ -107,7 +107,7 @@ function* changeNickname(action) {
 		console.error(err);
 		yield put({
 			type: CHANGE_NICKNAME_FAILURE,
-			data: err.response.data,
+			error: err.response.data,
 		})
 	}
 }
@@ -127,7 +127,7 @@ function* loadMyInfo(action) {
 		console.error(err);
 		yield put({
 			type: LOAD_MY_INFO_FAILURE,
-			data: err.response.data,
+			error: err.response.data,
 		})
 	}
 }
