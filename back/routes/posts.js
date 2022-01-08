@@ -1,12 +1,19 @@
 const express = require('express');
-
+const { Op } = require('sequelize');
 const {Post, User, Image, Comment} = require('../models');
 
 const router = express.Router();
 
 router.get('/', async (req, res, next) => {
 	try {
+		const where = {};
+		if (parseInt(req.query.lastId, 10)) { // 초기 로딩이 아닐때
+			// 조건이 id가 lastId보다 작은것들 불러와라
+			// Op.lt === 연산자 (보다 작은)
+			where.id = { [Op.lt]: parseInt(req.query.lastId, 10)}
+		}
 		const posts = await Post.findAll({
+			where,
 			// 실무에서는 limit, offset 조합을 잘 쓰지 않는다
 			// 치명적인 단점: 중간에 게시물이 추가, 삭제된다면 offset과 limit이 꼬이게됨
 			// where: { id: lastId },// lastId는 중간에 게시물이 추가,삭제 되어도 고정이기 떄문에 위의 단점을 커버가능
