@@ -1,12 +1,12 @@
 const DataTypes = require('sequelize');
 const {Model} = DataTypes;
 
-module.exports = class Image extends Model {
+module.exports = class Hashtag extends Model {
   static init(sequelize) {
     return super.init({
       // id가 기본적으로 들어있다.
-      src: {
-        type: DataTypes.STRING(200),
+      name: {
+        type: DataTypes.STRING(20),
         allowNull: false,
       },
     }, {

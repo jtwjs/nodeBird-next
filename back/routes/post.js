@@ -42,8 +42,8 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
     if (hashtags) {
     	// findOrCreate db에 없다면 추가 있으면 추가하지 않음, where절 필수
     	const result = await Promise.all(hashtags.map((tag) => Hashtag.findOrCreate({
-		    where: {name: tag.slice(1).toLowerCase() }
-    	}))); // [[값, 중복유무불린값], [해쉬태그, true]]
+        where: { name: tag.slice(1).toLowerCase() },
+      }))); // result === [[값, 중복유무불린값], [해쉬태그, true]]
     	await post.addHashtags(result.map((v) => v[0]));
     }
 
