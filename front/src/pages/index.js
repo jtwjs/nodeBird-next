@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {END} from 'redux-saga';
+import axios from 'axios';
 import PostForm from '../components/PostForm';
 import PostCard from '../components/PostCard';
 import AppLayout from '../Layout/AppLayout';
@@ -54,6 +55,19 @@ const Home = () => {
 // 화면을 그리기 전에 서버쪽에서 먼저 실행
 // context 안에 store가 들어있다.
 export const getServerSideProps = wrapper.getServerSideProps((store) => async ({req, res, ...etc}) => {
+	// 브라우저에서는 쿠키가 자동으로 header에 담겨서 보내지지지만
+	// 서버에서는 직접 header에 쿠키를 담아서 보내야 한다.
+	// 그러므로 프론트서버에서 직접 header에 쿠키를 설정하는 로직 작성
+  const cookie = req ? req.headers.cookie : '';
+  // 프론트서버에서 쿠키가 공유되는 문제 CUT
+	// 프론트 서버도 서버기때문에 1개, 클라이언트는 ~++
+	// 프론트 서버에서 axios.defaults.header.Cookie를 설정하게 되면
+	// 모든 클라이언트는 이 프론트 서버를 거쳐서 백엔드 서버로 요청을 보내기에
+	// 같은 쿠키가 적용되는 문제가 생긴다.
+  axios.defaults.headers.Cookie = '';
+  if (req && cookie) {
+    axios.defaults.headers.Cookie = cookie;
+  }
   store.dispatch({
     type: LOAD_MY_INFO_REQUEST,
   });
