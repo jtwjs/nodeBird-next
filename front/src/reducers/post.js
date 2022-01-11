@@ -13,6 +13,9 @@ export const initialState = {
   loadPostsLoading: false,
   loadPostsDone: false,
   loadPostsError: null,
+	loadPostLoading: false,
+  loadPostDone: false,
+  loadPostError: null,
   addPostLoading: false,
   addPostDone: false,
   addPostError: null,
@@ -28,6 +31,7 @@ export const initialState = {
   retweetLoading: false,
   retweetDone: false,
   retweetError: null,
+	post: null,
 };
 
 export const UPLOAD_IMAGES_REQUEST = 'UPLOAD_IMAGES_REQUEST';
@@ -45,6 +49,10 @@ export const UNLIKE_POST_FAILURE = 'UNLIKE_POST_FAILURE';
 export const LOAD_POSTS_REQUEST = 'LOAD_POSTS_REQUEST';
 export const LOAD_POSTS_SUCCESS = 'LOAD_POSTS_SUCCESS';
 export const LOAD_POSTS_FAILURE = 'LOAD_POSTS_FAILURE';
+
+export const LOAD_POST_REQUEST = 'LOAD_POST_REQUEST';
+export const LOAD_POST_SUCCESS = 'LOAD_POST_SUCCESS';
+export const LOAD_POST_FAILURE = 'LOAD_POST_FAILURE';
 
 export const ADD_POST_REQUEST = 'ADD_POST_REQUEST';
 export const ADD_POST_SUCCESS = 'ADD_POST_SUCCESS';
@@ -128,6 +136,20 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
     case UNLIKE_POST_FAILURE:
       draft.unlikePostsLoading = false;
       draft.unlikePostsError = action.error;
+      break;
+      case LOAD_POST_REQUEST:
+      draft.loadPostLoading = true;
+      draft.loadPostDone = false;
+      draft.loadPostError = null;
+      break;
+    case LOAD_POST_SUCCESS:
+      draft.loadPostLoading = false;
+      draft.loadPostDone = true;
+      draft.post = action.data;
+      break;
+    case LOAD_POST_FAILURE:
+      draft.loadPostLoading = false;
+      draft.loadPostError = action.error;
       break;
     case LOAD_POSTS_REQUEST:
       draft.loadPostsLoading = true;
