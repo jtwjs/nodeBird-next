@@ -11,6 +11,7 @@ const morgan = require('morgan');
 const postRouter = require('./routes/post');
 const postsRouter = require('./routes/posts');
 const userRouter = require('./routes/user');
+const hashtagRouter = require('./routes/hashtag');
 const db = require('./models');
 const passportConfig = require('./passport');
 
@@ -60,6 +61,7 @@ app.get('/', (req, res) => {
 app.use('/post', postRouter);
 app.use('/posts', postsRouter);
 app.use('/user', userRouter);
+app.use('/hashtag', hashtagRouter);
 
 /*
 express 내부적으로 app.use와 app.listen 사이에 error middleware가 존재
