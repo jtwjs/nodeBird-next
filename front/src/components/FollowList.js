@@ -6,7 +6,7 @@ import {List, Button, Card} from 'antd';
 import {StopOutlined} from "@ant-design/icons";
 import {REMOVE_FOLLOWER_REQUEST, UNFOLLOW_REQUEST} from "../reducers/user";
 
-const FollowList = ({header, data}) => {
+const FollowList = ({header, data, onClickMore, loading}) => {
 	const dispatch = useDispatch();
 
 	const onCancel = (id) => () => {
@@ -20,7 +20,8 @@ const FollowList = ({header, data}) => {
 				type: REMOVE_FOLLOWER_REQUEST,
 				data: id,
 			});
-		}``
+		}
+		``
 	}
 
 	return (
@@ -28,7 +29,7 @@ const FollowList = ({header, data}) => {
 			grid={{gutter: 4, xs: 2, md: 3}}
 			size="small"
 			header={<div>{header}</div>}
-			loadMore={<LoadMoreWrapper><Button>더 보기</Button></LoadMoreWrapper>}
+			loadMore={<LoadMoreWrapper><Button onClick={onClickMore} loading={loading}>더 보기</Button></LoadMoreWrapper>}
 			bordered
 			dataSource={data}
 			renderItem={(item) => (
@@ -46,6 +47,8 @@ FollowList.propTypes =
 	{
 		header: PropTypes.string.isRequired,
 		data: PropTypes.array.isRequired,
+		onClickMore: PropTypes.func.isRequired,
+		loading: PropTypes.bool.isRequired,
 	}
 
 export default FollowList;

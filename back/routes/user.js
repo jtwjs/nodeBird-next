@@ -8,43 +8,6 @@ const {isLoggedIn, isNotLoggedIn} = require('./middlewares');
 
 const router = express.Router();
 
-router.get('/:userId', async (req, res, next) => {
-  try {
-    const fullUserWithoutPassword = await User.findOne({
-      where: {id: req.params.userId},
-      attributes: {
-        exclude: ['password'],
-      },
-      include: [{
-        model: Post,
-        attributes: ['id'], // attribute 특정 데이터만 추출 또는 제외 가능
-      }, {
-        model: User,
-        as: 'Followings',
-        attributes: ['id'],
-      }, {
-        model: User,
-        as: 'Followers',
-        attributes: ['id'],
-      }]
-    })
-    if (fullUserWithoutPassword) {
-      const data = fullUserWithoutPassword.toJSON();
-      // 개인정보 침해 예방
-      data.Posts = data.Posts.length;
-      data.Followers = data.Followers.length;
-      data.Followings = data.Followings.length;
-      res.status(200).json(data);
-    } else {
-      res.status(403).json('유령입니다.');
-    }
-  } catch (err) {
-    console.error(err);
-    next(err);
-  }
-
-});
-
 router.get('/', async (req, res, next) => {
   try {
     if (req.user) {
@@ -157,6 +120,39 @@ router.post('/logout', isLoggedIn, (req, res) => {
   res.send('ok');
 });
 
+
+router.get('/followers', isLoggedIn, async (req, res, next) => {
+  try {
+    const user = await User.findOne({where: {id: req.user.id}});
+    if (!user) {
+      res.status(403).send('유령을 찾으시나요 ㅋ')
+    }
+    const followers = await user.getFollowers({
+	    limit: parseInt(req.query.limit,10), // 3개만 불러옴
+    });
+    res.status(200).json(followers);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+})
+
+router.get('/followings', isLoggedIn, async (req, res, next) => {
+  try {
+    const user = await User.findOne({where: {id: req.user.id}});
+    if (!user) {
+      res.status(403).send('유령을 찾으시나요 ㅋ')
+    }
+    const followings = await user.getFollowings({
+	    limit: parseInt(req.query.limit, 10),
+    });
+    res.status(200).json(followings);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+})
+
 router.patch('/nickname', isLoggedIn, async (req, res, next) => {
   try {
     await User.update({
@@ -194,34 +190,6 @@ router.delete('/:userId/follow', isLoggedIn, async (req, res, next) => {
     }
     await user.removeFollowers(req.user.id);
     res.status(200).json({UserId: parseInt(req.params.userId, 10)});
-  } catch (err) {
-    console.error(err);
-    next(err);
-  }
-})
-
-router.get('/followers', isLoggedIn, async (req, res, next) => {
-  try {
-    const user = await User.findOne({where: {id: req.user.id}});
-    if (!user) {
-      res.status(403).send('유령을 찾으시나요 ㅋ')
-    }
-    const followers = await user.getFollowers();
-    res.status(200).json(followers);
-  } catch (err) {
-    console.error(err);
-    next(err);
-  }
-})
-
-router.get('/followings', isLoggedIn, async (req, res, next) => {
-  try {
-    const user = await User.findOne({where: {id: req.user.id}});
-    if (!user) {
-      res.status(403).send('유령을 찾으시나요 ㅋ')
-    }
-    const followings = await user.getFollowings();
-    res.status(200).json(followings);
   } catch (err) {
     console.error(err);
     next(err);
@@ -296,5 +264,41 @@ router.get('/:userId/posts', async (req, res, next) => {
 		next(err);
 	}
 })
+
+router.get('/:userId', async (req, res, next) => {
+  try {
+    const fullUserWithoutPassword = await User.findOne({
+      where: {id: req.params.userId},
+      attributes: {
+        exclude: ['password'],
+      },
+      include: [{
+        model: Post,
+        attributes: ['id'], // attribute 특정 데이터만 추출 또는 제외 가능
+      }, {
+        model: User,
+        as: 'Followings',
+        attributes: ['id'],
+      }, {
+        model: User,
+        as: 'Followers',
+        attributes: ['id'],
+      }]
+    })
+    if (fullUserWithoutPassword) {
+      const data = fullUserWithoutPassword.toJSON();
+      // 개인정보 침해 예방
+      data.Posts = data.Posts.length;
+      data.Followers = data.Followers.length;
+      data.Followings = data.Followings.length;
+      res.status(200).json(data);
+    } else {
+      res.status(403).json('유령입니다.');
+    }
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
 
 module.exports = router;
