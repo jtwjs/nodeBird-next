@@ -12,10 +12,10 @@ import PostCard from "../../components/PostCard";
 const Post = () => {
 	const router = useRouter();
 	const {id} = router.query;
-  const {post} = useSelector((state) => state.post);
+  const { post } = useSelector((state) => state.post);
 
   return (
-    <AppLayout>
+	  <AppLayout>
       <Head>
         <title>
 	        {post.User.nickname}님의 글

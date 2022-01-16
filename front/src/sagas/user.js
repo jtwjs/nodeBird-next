@@ -1,164 +1,164 @@
-import {all, fork, call, put, takeLatest} from 'redux-saga/effects';
-import axios from 'axios';
+import { all, fork, call, put, takeLatest } from "redux-saga/effects";
+import axios from "axios";
 
 import {
-	SIGN_UP_REQUEST,
-	SIGN_UP_SUCCESS,
-	SIGN_UP_FAILURE,
-	LOG_IN_FAILURE,
-	LOG_IN_REQUEST,
-	LOG_IN_SUCCESS,
-	LOG_OUT_FAILURE,
-	LOG_OUT_REQUEST,
-	LOG_OUT_SUCCESS,
-	FOLLOW_REQUEST,
-	FOLLOW_SUCCESS,
-	FOLLOW_FAILURE,
-	UNFOLLOW_REQUEST,
-	UNFOLLOW_SUCCESS,
-	UNFOLLOW_FAILURE,
-	LOAD_MY_INFO_REQUEST,
-	LOAD_MY_INFO_SUCCESS,
-	LOAD_MY_INFO_FAILURE,
-	CHANGE_NICKNAME_REQUEST,
-	CHANGE_NICKNAME_FAILURE,
-	CHANGE_NICKNAME_SUCCESS,
-	LOAD_FOLLOWERS_REQUEST,
-	LOAD_FOLLOWINGS_REQUEST,
-	LOAD_FOLLOWERS_SUCCESS,
-	LOAD_FOLLOWERS_FAILURE,
-	LOAD_FOLLOWINGS_SUCCESS,
-	LOAD_FOLLOWINGS_FAILURE,
-	REMOVE_FOLLOWER_REQUEST,
-	REMOVE_FOLLOWER_FAILURE,
-	REMOVE_FOLLOWER_SUCCESS,
-	LOAD_USER_INFO_REQUEST,
-	LOAD_USER_INFO_SUCCESS,
-	LOAD_USER_INFO_FAILURE,
-} from '../reducers/user';
+  SIGN_UP_REQUEST,
+  SIGN_UP_SUCCESS,
+  SIGN_UP_FAILURE,
+  LOG_IN_FAILURE,
+  LOG_IN_REQUEST,
+  LOG_IN_SUCCESS,
+  LOG_OUT_FAILURE,
+  LOG_OUT_REQUEST,
+  LOG_OUT_SUCCESS,
+  FOLLOW_REQUEST,
+  FOLLOW_SUCCESS,
+  FOLLOW_FAILURE,
+  UNFOLLOW_REQUEST,
+  UNFOLLOW_SUCCESS,
+  UNFOLLOW_FAILURE,
+  LOAD_MY_INFO_REQUEST,
+  LOAD_MY_INFO_SUCCESS,
+  LOAD_MY_INFO_FAILURE,
+  CHANGE_NICKNAME_REQUEST,
+  CHANGE_NICKNAME_FAILURE,
+  CHANGE_NICKNAME_SUCCESS,
+  LOAD_FOLLOWERS_REQUEST,
+  LOAD_FOLLOWINGS_REQUEST,
+  LOAD_FOLLOWERS_SUCCESS,
+  LOAD_FOLLOWERS_FAILURE,
+  LOAD_FOLLOWINGS_SUCCESS,
+  LOAD_FOLLOWINGS_FAILURE,
+  REMOVE_FOLLOWER_REQUEST,
+  REMOVE_FOLLOWER_FAILURE,
+  REMOVE_FOLLOWER_SUCCESS,
+  LOAD_USER_INFO_REQUEST,
+  LOAD_USER_INFO_SUCCESS,
+  LOAD_USER_INFO_FAILURE,
+} from "../reducers/user";
 
 function loadUserInfoAPI(data) {
-	return axios.get(`user/${data}`);
+  return axios.get(`user/${data}`);
 }
 
 function* loadUserInfo(action) {
-	try {
-		const result = yield call(loadUserInfoAPI, action.data);
-		yield put({
-			type: LOAD_USER_INFO_SUCCESS,
-			data: result.data,
-		})
-	} catch(err) {
-		console.error(err);
-		yield put({
-			type: LOAD_USER_INFO_FAILURE,
-			error: err.response.data,
-		})
-	}
+  try {
+    const result = yield call(loadUserInfoAPI, action.data);
+    yield put({
+      type: LOAD_USER_INFO_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LOAD_USER_INFO_FAILURE,
+      error: err.response.data,
+    });
+  }
 }
 
 function removeFollowerAPI(data) {
-	return axios.delete(`user/follower/${data}`);
+  return axios.delete(`user/follower/${data}`);
 }
 
 function* removeFollower(action) {
-	try {
-		const result = yield call(removeFollowerAPI, action.data);
-		yield put({
-			type: REMOVE_FOLLOWER_SUCCESS,
-			data: result.data,
-		})
-	} catch(err) {
-		console.error(err);
-		yield put({
-			type: REMOVE_FOLLOWER_FAILURE,
-			error: err.response.data,
-		})
-	}
+  try {
+    const result = yield call(removeFollowerAPI, action.data);
+    yield put({
+      type: REMOVE_FOLLOWER_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: REMOVE_FOLLOWER_FAILURE,
+      error: err.response.data,
+    });
+  }
 }
 
 function loadFollowersAPI() {
-	return axios.get('user/followers');
+  return axios.get("user/followers");
 }
 
 function* loadFollowers() {
-	try {
-		const result = yield call(loadFollowersAPI);
-		yield put({
-			type: LOAD_FOLLOWERS_SUCCESS,
-			data: result.data,
-		})
-	} catch(err) {
-		console.error(err);
-		yield put({
-			type: LOAD_FOLLOWERS_FAILURE,
-			error: err.response.data,
-		})
-	}
+  try {
+    const result = yield call(loadFollowersAPI);
+    yield put({
+      type: LOAD_FOLLOWERS_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LOAD_FOLLOWERS_FAILURE,
+      error: err.response.data,
+    });
+  }
 }
 
 function loadFollowingsAPI() {
-	return axios.get('user/followings');
+  return axios.get("user/followings");
 }
 
 function* loadFollowings() {
-	try {
-		const result = yield call(loadFollowingsAPI);
-		yield put({
-			type: LOAD_FOLLOWINGS_SUCCESS,
-			data: result.data,
-		})
-	} catch(err) {
-		console.error(err);
-		yield put({
-			type: LOAD_FOLLOWINGS_FAILURE,
-			data: err.response.data,
-		})
-	}
+  try {
+    const result = yield call(loadFollowingsAPI);
+    yield put({
+      type: LOAD_FOLLOWINGS_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LOAD_FOLLOWINGS_FAILURE,
+      data: err.response.data,
+    });
+  }
 }
 
 function changeNicknameAPI(data) {
-	return axios.patch('user/nickname', {nickname: data});
+  return axios.patch("user/nickname", { nickname: data });
 }
 
 function* changeNickname(action) {
-	try {
-		const result = yield call(changeNicknameAPI, action.data);
-		yield put({
-			type: CHANGE_NICKNAME_SUCCESS,
-			data: result.data,
-		})
-	} catch(err) {
-		console.error(err);
-		yield put({
-			type: CHANGE_NICKNAME_FAILURE,
-			error: err.response.data,
-		})
-	}
+  try {
+    const result = yield call(changeNicknameAPI, action.data);
+    yield put({
+      type: CHANGE_NICKNAME_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: CHANGE_NICKNAME_FAILURE,
+      error: err.response.data,
+    });
+  }
 }
 
 function loadMyInfoAPI(data) {
-	return axios.get('/user', data);
+  return axios.get("/user", data);
 }
 
 function* loadMyInfo(action) {
-	try {
-		const result = yield call(loadMyInfoAPI, action.data);
-		yield put({
-			type: LOAD_MY_INFO_SUCCESS,
-			data: result.data,
-		})
-	} catch(err) {
-		console.error(err);
-		yield put({
-			type: LOAD_MY_INFO_FAILURE,
-			error: err.response.data,
-		})
-	}
+  try {
+    const result = yield call(loadMyInfoAPI, action.data);
+    yield put({
+      type: LOAD_MY_INFO_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LOAD_MY_INFO_FAILURE,
+      error: err.response.data,
+    });
+  }
 }
 
 function signupAPI(data) {
-  return axios.post('/user', data);
+  return axios.post("/user", data);
 }
 
 function* signup(action) {
@@ -171,12 +171,12 @@ function* signup(action) {
     yield put({
       type: SIGN_UP_FAILURE,
       error: err.response.data,
-    })
+    });
   }
 }
 
 function logInAPI(data) {
-  return axios.post('/user/login', data);
+  return axios.post("/user/login", data);
 }
 
 function* logIn(action) {
@@ -196,7 +196,7 @@ function* logIn(action) {
 }
 
 function logOutAPI() {
-  return axios.post('/user/logout');
+  return axios.post("/user/logout");
 }
 
 function* logOut() {
@@ -229,7 +229,7 @@ function* follow(action) {
     yield put({
       type: FOLLOW_FAILURE,
       error: err.response.data,
-    })
+    });
   }
 }
 
@@ -248,32 +248,32 @@ function* unfollow(action) {
     yield put({
       type: UNFOLLOW_FAILURE,
       error: err.response.data,
-    })
+    });
   }
 }
 
 function* watchLoadUserInfo() {
-	yield takeLatest(LOAD_USER_INFO_REQUEST, loadUserInfo);
+  yield takeLatest(LOAD_USER_INFO_REQUEST, loadUserInfo);
 }
 
 function* watchRemoveFollower() {
-	yield takeLatest(REMOVE_FOLLOWER_REQUEST, removeFollower);
+  yield takeLatest(REMOVE_FOLLOWER_REQUEST, removeFollower);
 }
 
 function* watchLoadFollowers() {
-	yield takeLatest(LOAD_FOLLOWERS_REQUEST, loadFollowers)
+  yield takeLatest(LOAD_FOLLOWERS_REQUEST, loadFollowers);
 }
 
 function* watchLoadFollowings() {
-	yield takeLatest(LOAD_FOLLOWINGS_REQUEST, loadFollowings)
+  yield takeLatest(LOAD_FOLLOWINGS_REQUEST, loadFollowings);
 }
 
 function* watchChangeNickname() {
-	yield takeLatest(CHANGE_NICKNAME_REQUEST, changeNickname)
+  yield takeLatest(CHANGE_NICKNAME_REQUEST, changeNickname);
 }
 
 function* watchLoadMyInfo() {
-	yield takeLatest(LOAD_MY_INFO_REQUEST, loadMyInfo)
+  yield takeLatest(LOAD_MY_INFO_REQUEST, loadMyInfo);
 }
 
 function* watchSignup() {
@@ -298,12 +298,12 @@ function* watchUnfollow() {
 
 export default function* userSaga() {
   yield all([
-  	fork(watchLoadUserInfo),
-  	fork(watchRemoveFollower),
-  	fork(watchLoadFollowers),
-  	fork(watchLoadFollowings),
-  	fork(watchChangeNickname),
-  	fork(watchLoadMyInfo),
+    fork(watchLoadUserInfo),
+    fork(watchRemoveFollower),
+    fork(watchLoadFollowers),
+    fork(watchLoadFollowings),
+    fork(watchChangeNickname),
+    fork(watchLoadMyInfo),
     fork(watchSignup),
     fork(watchLogIn),
     fork(watchLogOut),
