@@ -6,7 +6,7 @@ import {List, Button, Card} from 'antd';
 import {StopOutlined} from "@ant-design/icons";
 import {REMOVE_FOLLOWER_REQUEST, UNFOLLOW_REQUEST} from "../reducers/user";
 
-const FollowList = ({header, data, onClickMore, loading}) => {
+const FollowList = ({header, data = null, onClickMore, loading}) => {
 	const dispatch = useDispatch();
 
 	const onCancel = (id) => () => {
